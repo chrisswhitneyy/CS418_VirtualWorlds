@@ -1,37 +1,41 @@
+/********
+CS 413 Project 1 Minimalism: Frank the Alien 
+
+Purpose: To demonstrate a basic understanding of the core techniologies
+for this course these include, PIXIE.js, bitmap graphics, git, and scene
+graph organization. 
+
+Author: Christopher D. Whitney    
+*********/
+
+//Gets gameport element from document
 var gameport = document.getElementById("gameport");
 
+//Creates best render for browser
 var renderer = PIXI.autoDetectRenderer(400,400,{backgroundColor:0x3344ee});
+
+//Appends the render view to the gameport element
 gameport.appendChild(renderer.view);
 
+//Creates main stage container
 var stage = new PIXI.Container();
+//Aliases
+var loader = PIXI.loader;
+var resources = PIXI.loader.resources;
+var Sprite = PIXI.Sprite;
 
-var sqaure1 = PIXI.Texture.fromImage("asset.png");
-var sqaure2 = PIXI.Texture.fromImage("asset.png");
+loader.add("assets/frank-alien.png").load(setup);
 
-var sprite = new PIXI.Sprite(sqaure1);
-var sprite2 = new PIXI.Sprite(sqaure2);
+var alien, state;
 
-sprite.anchor.x = 0.5;
-sprite.anchor.y = 0.5;
-
-sprite.position.x = 200;
-sprite.position.y = 200;
-
-sprite2.anchor.x = 0.5;
-sprite2.anchor.y = 0.5;
-
-sprite2.position.x = 100;
-sprite2.position.y = 200;
-
-stage.addChild(sprite);
-stage.addChild(sprite2);
+function setup(){
+    alien_sprite = new Sprite();	
+}
 
 renderer.render(stage);
-
-function animate(){
-  requestAnimationFrame(animate);
-  sprite.rotation += 0.05;
+function gameLoop(){
+  requestAnimationFrame(gameLoop);
   renderer.render(stage);
 } 
 
-animate();
+gameLoop();
