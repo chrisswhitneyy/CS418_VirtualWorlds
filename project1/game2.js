@@ -110,10 +110,10 @@ function setup() {
   alien.vy = 0;
   stage.addChild(alien);
   //Capture the keyboard arrow keys
-  var left = keyboard(37),
-      up = keyboard(38),
-      right = keyboard(39),
-      down = keyboard(40);
+  var left = keyboard(65),
+      up = keyboard(87),
+      right = keyboard(68),
+      down = keyboard(83);
   //Left arrow key `press` method
   left.press = function() {
     //Change the alien's velocity when the key is pressed
