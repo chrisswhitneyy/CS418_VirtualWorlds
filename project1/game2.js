@@ -37,6 +37,7 @@ var menu = new Container();
 
 //loads in alien asset and call setup
 loader.add("assets/frank-alien.png");
+loader.add("assets/title.png");
 loader.add("assets/background.png");
 loader.add("assets/play_button.png");
 loader.add("assets/play_button2.png");
@@ -51,15 +52,14 @@ function menu_setup(){
    stage.addChild(background_sprite);
 
    alien = new Sprite(resources["assets/frank-alien.png"].texture);
-   alien.y = 200;
+   alien.y = 350;
    alien.x = 200;
    
    menu.addChild(alien);
+    
+   var title_sprite = new Sprite(resources["assets/title.png"].texture);
    
-   var str_title = "Frank the Alien";
-   var title_text = new Text(str_title,{font : '50px Arial', fill : 0xff1010, align : 'center'});
-   
-   menu.addChild(title_text);
+   menu.addChild(title_sprite);
 
    var play_button = new Sprite();
    
@@ -69,7 +69,7 @@ function menu_setup(){
    play_button.texture = passive_texture;
    
    play_button.x = 50;
-   play_button.y = 150;
+   play_button.y = 300;
  
 
    play_button.interactive = true;
@@ -109,6 +109,8 @@ function setup() {
   alien.vx = 0;
   alien.vy = 0;
   stage.addChild(alien);
+
+
   //Capture the keyboard arrow keys
   var left = keyboard(65),
       up = keyboard(87),
@@ -180,7 +182,8 @@ function play() {
   alien.x += alien.vx;
   alien.y += alien.vy; 
 }
-//The `keyboard` helper function
+//The `keyboard` helper function which handles the event listening
+//and returns a key object
 function keyboard(keyCode) {
   var key = {};
   key.code = keyCode;
