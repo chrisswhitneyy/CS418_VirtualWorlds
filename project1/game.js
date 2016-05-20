@@ -41,6 +41,8 @@ var main_stage = new Container(0x000000, true); //main stage
 var board = new Container(); //game board
 var win = new Container(); //win text
 
+PIXI.SCALE_MODES.DEFAULT = PIXI.SCALE_MODES.NEAREST;
+
 //load assets
 loader.add("assets/golf_ball.png");
 loader.add("assets/hole.png");
@@ -122,13 +124,25 @@ function animate(){
 
 //playBoard: game logic 
 function playBoard(){ 
+    collsionCheck();
     //rotate the hole
     hole.rotation += 0.1;
-    hole.position.x += Math.random(0,1);
-    hole.position.y += Math.random(0,1);
+    var randnum = Math.random(0,1);
+    var new_x = hole.position.x + randnum;
+    var new_y = hole.position.y + randnum;
+
+    if(new_x < renderer.width){
+	hole.position.x += randnum;
+    	console.log("Renderer width = " + renderer.width);
+   	console.log("Hole x = " + hole.position.x);
+    }
+    if(new_y < renderer.height){
+    	hole.position.y += Math.random(0,1);
+	console.log("Renderer height = " + renderer.height);
+	console.log("Hole y = " + hole.position.y);
+    }
 
     golf_ball.rotation += 0.1;
-    collsionCheck();
 
 }
 
