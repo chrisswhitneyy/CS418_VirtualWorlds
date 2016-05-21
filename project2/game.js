@@ -191,7 +191,6 @@ function instructionSetup(){
   main_stage.addChild(instruction_stage);
   state = instructionRun;
   animate();
-
 }
 //creditSetup
 function creditSetup(){
@@ -245,6 +244,35 @@ function instructionRun(){
 
 }
 
+/*******
+Classes: 
+********/
+
+//level: a general class used by all the different 
+//instances of level. 
+function level = function(){
+  this.diffuclty = 0;
+  this.numberHole = 0;
+  this.stage = new Container();
+
+  this.placeObsticale = function placeObsticale(x,y){
+    
+  }
+  this.placeCollector = function placeCollector(x,y){
+    
+  }
+  this.placeHole= function placeHole(x,y){
+    
+  }
+  this.checkCollsion = function checkCollsion(){
+
+  }
+  this.checkWin = function checkWin(){
+
+  }
+
+
+}
 /*******
 Event handlers: 
 ********/
@@ -371,7 +399,6 @@ function backButtonHandler(event){
     menu_stage.visible = true;
   }
 }
-
 
 /********
 Helper functions
