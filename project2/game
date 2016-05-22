@@ -10,8 +10,7 @@ Author: Christopher D. Wholeney
 var Container = PIXI.Container, 
     Sprite = PIXI.Sprite, 
     Text = PIXI.Text, 
-    Texture = PIXI.Texture,
-    Point = PIXI.Point, 
+    Texture = PIXI.Texture, 
     autoDetectRenderer = PIXI.autoDetectRenderer,
     loader = PIXI.loader,
     resources = PIXI.loader.resources; 
@@ -54,9 +53,9 @@ function titleSetup(){
    background = new Sprite(resources["assets/background.png"].texture);
    main_stage.addChild(background);
 
-   //music = PIXI.audioManager.getAudio("assets/sound/intro.mp3");
-   //music.loop = true;
-   //music.play();
+   music = PIXI.audioManager.getAudio("assets/sound/intro.mp3");
+   music.loop = true;
+   music.play();
 
    title = new Text("Wacky Golf",{font:'50px Arial',fill: "black"}); 
    
@@ -149,12 +148,11 @@ function level1Setup(){
     background = new Sprite(resources["assets/background.png"].texture);
     main_stage.addChild(background);
 
-    //music.remove();
-    //music.manager.pause();
-    //music.remove();
-    //music = PIXI.audioManager.getAudio("assets/sound/theme.mp3");
-    //music.loop = true;
-    //music.manager.resume();
+    music.manager.pause();
+    music.remove();
+    music = PIXI.audioManager.getAudio("assets/sound/theme.mp3");
+    music.loop = true;
+    music.manager.resume();
 
     var stage = new Container();
     var obstacle = new Sprite();
@@ -162,7 +160,7 @@ function level1Setup(){
 
     //adds golf_ballt to board stage
     stage.addChild(golf_ball); 
-    current_level.placeGolfBall(20,20);
+    current_level.placeGolfBall(10,20);
     current_level.placeHole(360,370);
     current_level.placeObsticale(40,200,0);
 
@@ -245,14 +243,16 @@ function animate(){
 Run functions: 
 ********/
 function titleRun(){
-  window.setTimeout(menuSetup,1000);
+    window.setTimeout(menuSetup,1000);
 }
 function menuRun(){
   golf_ball.rotation += 0.005;
 }
 function levelRun(){ 
-  if(current_level.checkWin()==true){
-  //winSetup();
+  if(current_level.checkCollsion()==true){
+    winSetup();
+  }if(current_level.checkLoss() == true){
+    //loosing setup
   }
 }
 function creditRun(){
@@ -274,7 +274,6 @@ function level(diffuclty,obstacle,stage,golf_ball){
   this.stage = stage;
   this.golf_ball = golf_ball;
   this.obstacle = obstacle;
-  this.obstacles = new Container();
   this.hole;
 
   this.placeObsticale = function placessObsticale(x,y,rotation_amount){
@@ -282,7 +281,6 @@ function level(diffuclty,obstacle,stage,golf_ball){
     this.obstacle.x = x;
     this.obstacle.y = y;
     this.obstacle.rotation += rotation_amount;
-    this.obstacles.addChild(obstacle);
     stage.addChild(this.obstacle);
   }
   this.placeCollector = function placeCollector(x,y){
@@ -305,32 +303,65 @@ function level(diffuclty,obstacle,stage,golf_ball){
     this.golf_ball.anchor.y = 0.5;
     stage.addChild(this.golf_ball);
   }
-  this.checkWin = function checkWin(){
-
-  }
-  this.collsionCheck = function collsionCheck(new_position){
-
-    var distance = obstacle.toLocal(new_position);
-    distance.y = Math.abs(distance.y);
-    distance.x = Math.abs(distance.x);
-    
-    if ((distance.y <= (golf_ball.height/2 + obstacle.height/2)) // check vertical collision
-        &&
-        (distance.x <= (golf_ball.width/2 + obstacle.width/2))) { // check horizontal collision
-      return true; 
+  this.checkCollsion = function checkCollsion(){
+    if (collsionCheck(this.golf_ball,this.hole) == true){
+      return true;    
     }
     return false;
-
   }
   this.checkLoss = function checkLoss(){
     //if(number_lifes == 0){
     //  return true;
     //}
-  }  
+  }
 }
 /*******
 Event handlers: 
 ********/
+function keydownEventHandler(event){
+    event.preventDefault(); //prevents default key behavior, scrolling
+    
+    var new_x, new_y,temp;
+    var temp = current_level.golf_ball;
+    //up 
+    if (event.keyCode === 87 || event.keyCode === 38) {
+      new_y = temp.position.y - 10;
+      if (new_y > 10) {
+        temp.position.y = new_y; //new y position
+      }
+    }
+    
+  //down
+  if (event.keyCode === 83 || event.keyCode === 40) {
+    new_y = temp.position.y + 10;
+    if (new_y < renderer.height - 10) {
+      temp.position.y = new_y;
+    }
+  }
+  
+  //left
+  if (event.keyCode === 65 || event.keyCode === 37) {
+    new_x = temp.position.x - 10;
+    if (new_x > 10) {
+      temp.position.x = new_x;
+    }
+  }
+    //right
+    if (event.keyCode === 68 || event.keyCode === 39) {
+      new_x = temp.position.x + 10;
+      if (new_x < renderer.width - 10) {
+        temp.position.x = new_x;
+      }
+    }
+    
+    if(!collsionCheck(temp,current_level.obstacle)){
+      console.log(collsionCheck(temp,current_level.obstacle));
+      //renderer.render(main_stage);
+    }else{
+
+    }
+  }
+
 function menuClickHandler(event){
 
     var play_new_text = new Text("Play",{font:'20px Arial',fill: "white"});
@@ -397,15 +428,16 @@ function menuClickHandler(event){
     }
 
     mute_button.click = function(data){
-      unmute_button.visible = true;
       mute_button.visible = false;
-      music.manager.mute();
+      unmute_button.visible = true;
+      theme.manager.mute();
     }
     unmute_button.click = function(data){
-      //unmute_button.visible = false;
-      
-      music.manager.unmute();
+      theme.manager.unmute();
+      unmute_button.visible = false;
+      mute_button.visible = true;
     }
+
 }
 
 function backButtonHandler(event){
@@ -430,40 +462,15 @@ function backButtonHandler(event){
   }
 }
 
-function keydownEventHandler(event){
-    event.preventDefault(); //prevents default key behavior, scrolling
-    
-    var new_position = new Point(golf_ball.x,golf_ball.y);
-    //up 
-    if (event.keyCode === 87 || event.keyCode === 38 
-      && new_position.y - 10 > 10) {
-        new_position.y = golf_ball.y - 10;
-        new_position.x = golf_ball.x;
+/********
+Helper functions
+********/
+function collsionCheck(sprite1,sprite2){
+    if (sprite1.x < sprite2.x + sprite2.width &&
+      sprite1.x + sprite1.width > sprite2.x &&
+      sprite1.y < sprite2.y + sprite2.height &&
+      sprite1.height + sprite1.y > sprite2.y) {
+      return true; // collision detected!
     }
-    //down
-    if (event.keyCode === 83 || event.keyCode === 40 
-      && new_position.y + 10<renderer.height-10) {
-        new_position.y = golf_ball.y + 10;
-        new_position.x = golf_ball.x;
-    }
-    //left
-    if (event.keyCode === 65 || event.keyCode === 37 
-      && new_position.x - 10 > 10) {
-        new_position.x = golf_ball.x - 10;
-        new_position.y = golf_ball.y;
-    }
-    //right
-    if (event.keyCode === 68 || event.keyCode === 39 
-      && (new_position.x + 10 < renderer.width-10)) {
-        new_position.x = golf_ball.x + 10;
-        new_position.y = golf_ball.y;
-    }
-    //checks for collsions
-    if(!current_level.collsionCheck(new_position)){
-      golf_ball.x = new_position.x;
-      golf_ball.y = new_position.y;
-    }
-    renderer.render(main_stage);
 }
-
 
