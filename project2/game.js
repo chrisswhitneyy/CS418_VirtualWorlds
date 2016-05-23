@@ -157,14 +157,16 @@ function level1Setup(){
     //music.manager.resume();
 
     var stage = new Container();
-    var obstacle = new Sprite();
-    current_level = new level(0,obstacle,stage,golf_ball);
+    var obstacles = new Container();
+    current_level = new level(0,obstacles,stage,golf_ball);
 
     //adds golf_ballt to board stage
     stage.addChild(golf_ball); 
     current_level.placeGolfBall(20,20);
-    current_level.placeHole(360,370);
-    current_level.placeObsticale(40,200,0);
+    current_level.placeHole(380,380);
+    current_level.placeObsticale(20,80,0);
+    current_level.placeObsticale(240,220,0);
+    current_level.placeObsticale(60,290,0);
 
     //adds board to main_stage
     main_stage.addChild(stage);
@@ -251,8 +253,8 @@ function menuRun(){
   golf_ball.rotation += 0.005;
 }
 function levelRun(){ 
-  if(current_level.checkWin()==true){
-  //winSetup();
+  if(current_level.checkWin()){
+    winSetup();
   }
 }
 function creditRun(){
@@ -268,22 +270,21 @@ Classes:
 
 //level: a general class used by all the different 
 //instances of level. 
-function level(diffuclty,obstacle,stage,golf_ball){
+function level(diffuclty,obstacles,stage,golf_ball){
   
   this.diffuclty = diffuclty;
   this.stage = stage;
   this.golf_ball = golf_ball;
-  this.obstacle = obstacle;
-  this.obstacles = new Container();
+  this.obstacles = obstacles;
   this.hole;
 
   this.placeObsticale = function placessObsticale(x,y,rotation_amount){
-    this.obstacle = new Sprite(resources["assets/obstacle.png"].texture);
-    this.obstacle.x = x;
-    this.obstacle.y = y;
-    this.obstacle.rotation += rotation_amount;
+    var obstacle = new Sprite(resources["assets/obstacle.png"].texture);
+    obstacle.x = x;
+    obstacle.y = y;
+    obstacle.rotation += rotation_amount;
     this.obstacles.addChild(obstacle);
-    stage.addChild(this.obstacle);
+    this.stage.addChild(obstacles);
   }
   this.placeCollector = function placeCollector(x,y){
     
@@ -294,7 +295,7 @@ function level(diffuclty,obstacle,stage,golf_ball){
     this.hole.y = y;
     this.hole.anchor.x = 0.5;
     this.hole.anchor.y = 0.5;
-    stage.addChild(this.hole);
+    this.stage.addChild(this.hole);
   }
   this.placeGolfBall = function placeGolfBall(x,y){
     //creates instances of golf_ball sprite and adjusts position
@@ -303,24 +304,44 @@ function level(diffuclty,obstacle,stage,golf_ball){
     //sets holes anchors
     this.golf_ball.anchor.x = 0.5;
     this.golf_ball.anchor.y = 0.5;
-    stage.addChild(this.golf_ball);
+    this.stage.addChild(this.golf_ball);
   }
   this.checkWin = function checkWin(){
+    var newLeft = this.golf_ball.x - this.golf_ball.width/2;
+    var newDown = this.golf_ball.y - this.golf_ball.width/2;
+    var newUp = this.golf_ball.y - this.golf_ball.height/2 - this.golf_ball.width/4;
+    var holeRight = this.hole.x - this.golf_ball.width/2 - this.golf_ball.width/4;
+    var holeUp = this.hole.y - this.hole.height;
+    var holeLeft = this.hole.x + this.hole.width - this.golf_ball.width/4;
+    var holeDown = this.hole.y + this.hole.height/2;
 
-  }
-  this.collsionCheck = function collsionCheck(new_position){
-
-    var distance = obstacle.toLocal(new_position);
-    distance.y = Math.abs(distance.y);
-    distance.x = Math.abs(distance.x);
-    
-    if ((distance.y <= (golf_ball.height/2 + obstacle.height/2)) // check vertical collision
-        &&
-        (distance.x <= (golf_ball.width/2 + obstacle.width/2))) { // check horizontal collision
-      return true; 
+    if(newLeft <= holeLeft && newUp <= holeDown 
+        && newLeft >= holeRight && newDown >= holeUp){
+        return true;
     }
     return false;
+  }
+  
+  this.collsionCheck = function collsionCheck(new_position){
+    var typeCollsion = false;
+    //Checks for collsion with the obstacles
+    var obstacles_children = obstacles.children;
+    var newLeft = new_position.x - this.golf_ball.width/2;
+    var newDown = new_position.y - this.golf_ball.width/2;
+    var newUp = new_position.y - this.golf_ball.height/2 - this.golf_ball.width/4;
+    for(i=0;i<obstacles_children.length; i++){
+      var obstacleRight = obstacles_children[i].x - this.golf_ball.width/2 - this.golf_ball.width/4;
+      var obstacleUp = obstacles_children[i].y - obstacles_children[i].height;
+      var obstacleLeft = obstacles_children[i].x + obstacles_children[i].width - this.golf_ball.width/4;
+      var obstacleDown = obstacles_children[i].y + obstacles_children[i].height/2;
 
+      if(newLeft <= obstacleLeft && newUp <= obstacleDown 
+        && newLeft >= obstacleRight && newDown >= obstacleUp){
+        typeCollsion=true;
+      }
+    }
+    
+    return typeCollsion;
   }
   this.checkLoss = function checkLoss(){
     //if(number_lifes == 0){
@@ -434,30 +455,37 @@ function keydownEventHandler(event){
     event.preventDefault(); //prevents default key behavior, scrolling
     
     var new_position = new Point(golf_ball.x,golf_ball.y);
+    var old_position = new Point(golf_ball.x,golf_ball.y);
+    
     //up 
-    if (event.keyCode === 87 || event.keyCode === 38 
-      && new_position.y - 10 > 10) {
+    if (event.keyCode === 87 || event.keyCode === 38) {
+      if(new_position.y != 10){
         new_position.y = golf_ball.y - 10;
         new_position.x = golf_ball.x;
+      }
     }
     //down
-    if (event.keyCode === 83 || event.keyCode === 40 
-      && new_position.y + 10<renderer.height-10) {
+    if (event.keyCode === 83 || event.keyCode === 40){ 
+      if(new_position.y != renderer.height-10) {
         new_position.y = golf_ball.y + 10;
         new_position.x = golf_ball.x;
+      }
     }
     //left
-    if (event.keyCode === 65 || event.keyCode === 37 
-      && new_position.x - 10 > 10) {
+    if (event.keyCode === 65 || event.keyCode === 37){ 
+      if(new_position.x != 10) {
         new_position.x = golf_ball.x - 10;
         new_position.y = golf_ball.y;
+      }
     }
     //right
-    if (event.keyCode === 68 || event.keyCode === 39 
-      && (new_position.x + 10 < renderer.width-10)) {
+    if (event.keyCode === 68 || event.keyCode === 39){ 
+      if (new_position.x != renderer.width-10){  
         new_position.x = golf_ball.x + 10;
         new_position.y = golf_ball.y;
+      }
     }
+
     //checks for collsions
     if(!current_level.collsionCheck(new_position)){
       golf_ball.x = new_position.x;
