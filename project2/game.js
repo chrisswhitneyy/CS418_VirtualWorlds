@@ -1,9 +1,14 @@
 /*******
-CS 413 Project 2 - Puzzles
+CS 413 Project 2 Puzzles - Wacky Golf
 
-Purpose: 
+Purpose: To create a compelling game that incoprates, sounds, spritesheets,
+tweening,js classes,and sceen graphs using Pixi.js. Each stage has it own
+setup and run function, the setup function places all the spirites and the
+run functions do all the win/loose logic. The level classes is used to setup 
+and maintain a level. This classe includes properites, including a stage and 
+the golf ball, along with methods used for collsion detection.  
 
-Author: Christopher D. Wholeney 
+Author: Christopher D. Whiteny 
 *******/
 
 //Aliases for PIXI.js
@@ -183,7 +188,8 @@ function level1Setup(){
   collector = new Container();
   current_level = new level(1,obstacles,collector,stage,golf_ball);
 
-  current_level.placeGolfBall(20,20);
+  current_level.placeText("Level 1", 0, 0);
+  current_level.placeGolfBall(20,40);
   current_level.placeHole(380,380);
   current_level.placeCollector(200,200);
 
@@ -204,10 +210,11 @@ function level2Setup(){
   collector = new Container();
   current_level = new level(2,obstacles,collector,stage,golf_ball);
 
+  current_level.placeText("Level 2", 0, 0);
   current_level.placeGolfBall(380,20);
   current_level.placeHole(20,380);
   current_level.placeCollector(200,200);
-  current_level.placeObsticale(100,100,0);
+  current_level.placeObsticale(0,100,0);
 
   main_stage.addChild(stage);
 
@@ -221,6 +228,32 @@ function level2Setup(){
   animate();
 
 }
+function level3Setup(){
+  var stage = new Container();
+  var obstacles = new Container();
+  collector = new Container();
+  current_level = new level(3,obstacles,collector,stage,golf_ball);
+
+  current_level.placeText("Level 3", 0, 0);
+  current_level.placeGolfBall(40,20);
+  current_level.placeHole(20,380);
+  current_level.placeCollector(200,200);
+  current_level.placeObsticale(20,100,0);
+  current_level.placeObsticale(240,100,0);
+
+  main_stage.addChild(stage);
+
+  //set document event handler
+  document.addEventListener('keydown',keydownEventHandler);
+
+  //sets state
+  state = level3Run;
+ 
+  //call animate()
+  animate();
+
+}
+
 //winSetup
 function winSetup(){
     win.visible = true;
@@ -311,7 +344,7 @@ function level0Run(){
 }
 function level1Run(){
   golf_ball.rotation += 0.005;
-  current_level.moveCollector(0.1,0);
+  current_level.moveCollector(0.09,0);
 
   if(current_level.checkWin()){
     current_level.visible = false;
@@ -329,6 +362,23 @@ function level1Run(){
 function level2Run(){
   golf_ball.rotation += 0.005;
   current_level.moveCollector(0.1,0);
+
+  if(current_level.checkWin()){
+    current_level.visible = false;
+    main_stage.removeChild(current_level.stage);
+    level3Setup();
+  }
+  if(current_level.checkLoss()){
+    current_level.visible = false;
+    main_stage.removeChild(current_level.stage);
+    current_level.golf_ball.x = 20;
+    current_level.golf_ball.y = 20;
+    loose1Setup();
+  }
+}
+function level3Run(){
+  golf_ball.rotation += 0.005;
+  current_level.moveCollector(0.15,0);
 
   if(current_level.checkWin()){
     current_level.visible = false;
