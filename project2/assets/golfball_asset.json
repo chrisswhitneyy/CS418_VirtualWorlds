@@ -1,0 +1,48 @@
+{"frames": {
+
+"golf_ball1.png":
+{
+	"frame": {"x":1,"y":1,"w":40,"h":39},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":1,"w":40,"h":39},
+	"sourceSize": {"w":40,"h":40},
+	"pivot": {"x":0.5,"y":0.5}
+},
+"golf_ball2.png":
+{
+	"frame": {"x":43,"y":1,"w":40,"h":39},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":1,"w":40,"h":39},
+	"sourceSize": {"w":40,"h":40},
+	"pivot": {"x":0.5,"y":0.5}
+},
+"golf_ball3.png":
+{
+	"frame": {"x":85,"y":1,"w":40,"h":39},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":1,"w":40,"h":39},
+	"sourceSize": {"w":40,"h":40},
+	"pivot": {"x":0.5,"y":0.5}
+},
+"golf_ball4.png":
+{
+	"frame": {"x":127,"y":1,"w":40,"h":39},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":1,"w":40,"h":39},
+	"sourceSize": {"w":40,"h":40},
+	"pivot": {"x":0.5,"y":0.5}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "golfball_asset.png",
+	"format": "RGBA8888",
+	"size": {"w":168,"h":41},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:12b8b679853b7ad494d9504cdd93f4c1:b7957d265bfd33de3771ff52187e4af1:fd7cfb711c5301547c64302649d60328$"
+}
+}

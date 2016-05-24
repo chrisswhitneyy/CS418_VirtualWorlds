@@ -1,0 +1,39 @@
+{"frames": {
+
+"putter1.png":
+{
+	"frame": {"x":1,"y":276,"w":36,"h":134},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":2,"y":5,"w":36,"h":134},
+	"sourceSize": {"w":40,"h":140},
+	"pivot": {"x":0.5,"y":0.5}
+},
+"putter2.png":
+{
+	"frame": {"x":1,"y":139,"w":37,"h":135},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":1,"y":4,"w":37,"h":135},
+	"sourceSize": {"w":40,"h":140},
+	"pivot": {"x":0.5,"y":0.5}
+},
+"putter3.png":
+{
+	"frame": {"x":1,"y":1,"w":37,"h":136},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":1,"y":2,"w":37,"h":136},
+	"sourceSize": {"w":40,"h":140},
+	"pivot": {"x":0.5,"y":0.5}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "putter_asset.png",
+	"format": "RGBA8888",
+	"size": {"w":39,"h":411},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:4ce8b0de6f8b61ec083ff50f085ab9a2:7fbd40747bd825b677747b8c586f79df:c5880b48b782fcf4050dcb9790079102$"
+}
+}

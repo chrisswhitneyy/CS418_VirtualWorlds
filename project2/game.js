@@ -30,6 +30,7 @@ var board = new Container(); //game board
 var title_stage = new Container(); //title stage
 var menu_stage = new Container(); //menu stage
 var instruction_stage = new Container(); //instruction stage
+var loose_stage = new Container();
 var credit_stage = new Container();
 var win = new Container(); //win text
 
@@ -54,9 +55,9 @@ function titleSetup(){
    background = new Sprite(resources["assets/background.png"].texture);
    main_stage.addChild(background);
 
-   //music = PIXI.audioManager.getAudio("assets/sound/intro.mp3");
-   //music.loop = true;
-   //music.play();
+   music = PIXI.audioManager.getAudio("assets/sound/intro.mp3");
+   music.loop = true;
+   music.play();
 
    title = new Text("Wacky Golf",{font:'50px Arial',fill: "black"}); 
    
@@ -140,33 +141,25 @@ function menuSetup(){
 loader.add("assets/hole1.png");
 loader.add("assets/obstacle.png");
 loader.add("assets/sound/theme.mp3");
-//loader.load(level1Setup);
-//level1Setup 
+
+//level0Setup 
 var current_level,board,holes,state; 
-function level1Setup(){
-
-    //Delete after devolopement, title stage addes background 
-    background = new Sprite(resources["assets/background.png"].texture);
-    main_stage.addChild(background);
-
-    //music.remove();
-    //music.manager.pause();
-    //music.remove();
-    //music = PIXI.audioManager.getAudio("assets/sound/theme.mp3");
-    //music.loop = true;
-    //music.manager.resume();
+function level0Setup(){
 
     var stage = new Container();
     var obstacles = new Container();
-    current_level = new level(0,obstacles,stage,golf_ball);
+    current_level = new level(0,obstacles,null,stage,golf_ball);
 
-    //adds golf_ballt to board stage
+    //adds golf_ballt to level stage
     stage.addChild(golf_ball); 
-    current_level.placeGolfBall(20,20);
+
+    current_level.placeGolfBall(20,120);
     current_level.placeHole(380,380);
-    current_level.placeObsticale(20,80,0);
+
     current_level.placeObsticale(240,220,0);
     current_level.placeObsticale(60,290,0);
+
+    current_level.placeText("Introduction to Controlls: \n Use the WASD or arrow keys \n to move the golf ball into \n the hole",10,10);
 
     //adds board to main_stage
     main_stage.addChild(stage);
@@ -175,22 +168,78 @@ function level1Setup(){
     document.addEventListener('keydown',keydownEventHandler);
     
     //sets state
-    state = levelRun;
+    state = level0Run;
  
     //call animate()
     animate();
 }
 
+loader.add("assets/putter_asset.json");
+var collector;
+function level1Setup(){
+
+  var stage = new Container();
+  var obstacles = new Container();
+  collector = new Container();
+  current_level = new level(1,obstacles,collector,stage,golf_ball);
+
+  current_level.placeGolfBall(20,20);
+  current_level.placeHole(380,380);
+  current_level.placeCollector(200,200);
+
+  main_stage.addChild(stage);
+
+  //set document event handler
+  document.addEventListener('keydown',keydownEventHandler);
+
+  //sets state
+  state = level1Run;
+ 
+  //call animate()
+  animate();
+}
+function level2Setup(){
+  var stage = new Container();
+  var obstacles = new Container();
+  collector = new Container();
+  current_level = new level(2,obstacles,collector,stage,golf_ball);
+
+  current_level.placeGolfBall(380,20);
+  current_level.placeHole(20,380);
+  current_level.placeCollector(200,200);
+  current_level.placeObsticale(100,100,0);
+
+  main_stage.addChild(stage);
+
+  //set document event handler
+  document.addEventListener('keydown',keydownEventHandler);
+
+  //sets state
+  state = level2Run;
+ 
+  //call animate()
+  animate();
+
+}
 //winSetup
 function winSetup(){
+    win.visible = true;
+    document.addEventListener('keydown',keydownEventHandler);
     //creates instances of win text and adjusts position     
     var text = new Text("Congrats you won.",{font : '24px Arial', fill : 0x000000});
     //adds text to win stage
     win.addChild(text); 
     //adds win stage to main_stage
     main_stage.addChild(win);
-    //render main_stage
-    renderer.render(main_stage);
+}
+//loose1Setup
+function loose1Setup(){
+  loose_stage.visible = true;
+  //set document event handler
+  document.addEventListener('keydown',keydownEventHandler);
+  var text = new Text("You loose. \nPress enter to restart",{font : '24px Arial', fill : 0x000000});
+  loose_stage.addChild(text);
+  main_stage.addChild(loose_stage);
 }
 //instructionSetup
 var back_button;
@@ -205,7 +254,7 @@ function instructionSetup(){
   back_button.y = 300;
   instruction_stage.addChild(back_button);
 
-  document.addEventListener("click", backButtonHandler());
+  document.addEventListener("click", backButtonHandler);
   main_stage.addChild(instruction_stage);
   state = instructionRun;
   animate();
@@ -224,7 +273,7 @@ function creditSetup(){
   credit_stage.addChild(back_button);
 
   main_stage.addChild(credit_stage);
-  document.addEventListener("click", backButtonHandler());
+  document.addEventListener("click", backButtonHandler);
   state = creditRun;
   animate();
 }
@@ -252,17 +301,51 @@ function titleRun(){
 function menuRun(){
   golf_ball.rotation += 0.005;
 }
-function levelRun(){ 
+function level0Run(){ 
+  golf_ball.rotation += 0.005;
   if(current_level.checkWin()){
-    winSetup();
+    main_stage.removeChild(current_level.stage);
+    title_stage.visible = true;
+    menu_stage.visible = true;
   }
 }
-function creditRun(){
+function level1Run(){
+  golf_ball.rotation += 0.005;
+  current_level.moveCollector(0.1,0);
 
+  if(current_level.checkWin()){
+    current_level.visible = false;
+    main_stage.removeChild(current_level.stage);
+    level2Setup();
+  }
+  if(current_level.checkLoss()){
+    current_level.visible = false;
+    main_stage.removeChild(current_level.stage);
+    current_level.golf_ball.x = 20;
+    current_level.golf_ball.y = 20;
+    loose1Setup();
+  }
 }
-function instructionRun(){
+function level2Run(){
+  golf_ball.rotation += 0.005;
+  current_level.moveCollector(0.1,0);
 
+  if(current_level.checkWin()){
+    current_level.visible = false;
+    main_stage.removeChild(current_level.stage);
+    winSetup();
+  }
+  if(current_level.checkLoss()){
+    current_level.visible = false;
+    main_stage.removeChild(current_level.stage);
+    current_level.golf_ball.x = 20;
+    current_level.golf_ball.y = 20;
+    loose1Setup();
+  }
 }
+
+function creditRun(){}
+function instructionRun(){}
 
 /*******
 Classes: 
@@ -270,13 +353,15 @@ Classes:
 
 //level: a general class used by all the different 
 //instances of level. 
-function level(diffuclty,obstacles,stage,golf_ball){
+function level(diffuclty,obstacles,collector,stage,golf_ball){
   
   this.diffuclty = diffuclty;
   this.stage = stage;
   this.golf_ball = golf_ball;
   this.obstacles = obstacles;
+  this.collector = collector;
   this.hole;
+  this.text;
 
   this.placeObsticale = function placessObsticale(x,y,rotation_amount){
     var obstacle = new Sprite(resources["assets/obstacle.png"].texture);
@@ -287,7 +372,19 @@ function level(diffuclty,obstacles,stage,golf_ball){
     this.stage.addChild(obstacles);
   }
   this.placeCollector = function placeCollector(x,y){
-    
+    var frames = [];
+    for (var i=1; i<=3; i++) {
+      frames.push(PIXI.Texture.fromFrame('putter' + i + '.png'));
+    }
+    this.collector = new PIXI.extras.MovieClip(frames);
+    this.collector.scale.x = 0.8;
+    this.collector.scale.y = 0.8;
+    this.collector.x = x;
+    this.collector.y = y;
+    this.collector.animationSpeed = 0.1;
+    this.collector.play();
+    this.stage.addChild(this.collector);
+
   }
   this.placeHole= function placeHole(x,y){
     this.hole = new Sprite(resources["assets/hole1.png"].texture);
@@ -344,10 +441,33 @@ function level(diffuclty,obstacles,stage,golf_ball){
     return typeCollsion;
   }
   this.checkLoss = function checkLoss(){
-    //if(number_lifes == 0){
-    //  return true;
-    //}
+    var collectorLeft = Math.round(this.collector.x) - this.collector.width/2;
+    var collectorRight = Math.round(this.collector.x) + this.collector.width/2;
+    var collectorUp = Math.round(this.collector.y);
+    var collectorDown = Math.round(this.collector.y) + this.collector.height;
+
+    var ballLeft = this.golf_ball.x - this.golf_ball.width/2;
+    var ballRight = this.golf_ball.x + this.golf_ball.width/2;
+    var ballUp = this.golf_ball.y - this.golf_ball.height/2;
+    var ballDown = this.golf_ball.y + this.golf_ball.height/2;
+
+    if(ballLeft<=collectorRight && ballRight >= collectorLeft
+      && ballUp <= collectorDown && ballDown >= collectorUp){
+      return true;
+    }
+    return false;
+    
   }  
+  this.moveCollector = function moveCollector(xspeed,yspeed){
+    this.collector.x = Math.abs((this.collector.x + xspeed)%400);
+    this.collector.y = Math.abs((this.collector.y + yspeed)%400);
+  }
+  this.placeText = function placeText(text,x,y){
+    this.text = new Text(text,{font:'20px Arial',fill: "black"});
+    this.text.x = x;
+    this.text.y = y;
+    this.stage.addChild(this.text);
+  }
 }
 /*******
 Event handlers: 
@@ -404,7 +524,7 @@ function menuClickHandler(event){
       title_stage.visible = false; 
       menu_stage.visible = false;
       instruction_stage.visible = true;
-      instructionSetup();
+      level0Setup();
     }
     instruction_button.mouseover = function(data){
       this.isOver = true;
@@ -485,7 +605,12 @@ function keydownEventHandler(event){
         new_position.y = golf_ball.y;
       }
     }
-
+    if(event.keyCode === 13){
+      console.log("enter hit");
+      loose_stage.visible = false;
+      win.visible = false;
+      level1Setup();
+    }
     //checks for collsions
     if(!current_level.collsionCheck(new_position)){
       golf_ball.x = new_position.x;
