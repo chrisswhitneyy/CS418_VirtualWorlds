@@ -1,6 +1,6 @@
 var GAME_WIDTH = 720;
 var GAME_HEIGHT = 400;
-var GAME_SCALE = 4;
+var GAME_SCALE = 2;
 // var HORIZON_Y = GAME_HEIGHT/GAME_SCALE/2;
 
 var gameport = document.getElementById("gameport");
@@ -30,27 +30,31 @@ function move() {
     player.moving = false;
     return;
   }
-  if(player.y - 32 < 10 || player.y + 32 > 6400 || player.x - 32 < 10 || player.x + 32 > 6400){
-    return;
-  }
-  
   player.moving = true;
 
-  console.log("players x: " + player.x);
-  console.log("players y: " + player.y);
-
-
   if (player.direction == MOVE_LEFT) {
-    createjs.Tween.get(player).to({x: player.x - 32}, 500).call(move);    
+    if(player.x-20 < 10)
+       createjs.Tween.get(player).to({x: player.x}, 500).call(move);
+    else
+      createjs.Tween.get(player).to({x: player.x - 20}, 500).call(move); 
   }
   if (player.direction == MOVE_RIGHT)
-    createjs.Tween.get(player).to({x: player.x + 32}, 500).call(move);
+    if(player.x + 20 >= world.worldWidth - 10)
+      createjs.Tween.get(player).to({x: player.x}, 500).call(move);
+    else
+      createjs.Tween.get(player).to({x: player.x + 20}, 500).call(move);
 
   if (player.direction == MOVE_UP)
-    createjs.Tween.get(player).to({y: player.y - 32}, 500).call(move);
+    if(player.y - 20 < 32)
+      createjs.Tween.get(player).to({y: player.y}, 500).call(move);
+    else
+      createjs.Tween.get(player).to({y: player.y - 20}, 500).call(move);
   
   if (player.direction == MOVE_DOWN)
-    createjs.Tween.get(player).to({y: player.y + 32}, 500).call(move);
+    if(player.y + 20 >= world.worldHeight - 10)
+      createjs.Tween.get(player).to({y: player.y}, 500).call(move);
+    else
+      createjs.Tween.get(player).to({y: player.y + 20}, 500).call(move);
 }
 
 // Keydown events start movement
@@ -94,12 +98,11 @@ function ready() {
   world = tu.makeTiledWorld("map_json", "tileset.png");
   stage.addChild(world);
 
-
   var blob = world.getObject("circle");
   
   player = new PIXI.Sprite(PIXI.loader.resources.circle.texture);
-  player.x = 200
-  player.y = 200;
+  player.x = blob.x;
+  player.y = blob.y;
   player.anchor.x = 0.0;
   player.anchor.y = 1.0;
 
