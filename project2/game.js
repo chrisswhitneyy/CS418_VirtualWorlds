@@ -44,7 +44,7 @@ PIXI.SCALE_MODES.DEFAULT = PIXI.SCALE_MODES.NEAREST;
 //load assets
 loader.add("assets/background.png");
 loader.add("assets/golf_ball1.png");
-loader.add("assets/sound/intro.mp3");
+loader.add("assets/sound/theme.mp3");
 
 loader.load(titleSetup);
 
@@ -60,7 +60,7 @@ function titleSetup(){
    background = new Sprite(resources["assets/background.png"].texture);
    main_stage.addChild(background);
 
-   music = PIXI.audioManager.getAudio("assets/sound/intro.mp3");
+   music = PIXI.audioManager.getAudio("assets/sound/theme.mp3");
    music.loop = true;
    music.play();
 
@@ -145,7 +145,6 @@ function menuSetup(){
 //load assets
 loader.add("assets/hole1.png");
 loader.add("assets/obstacle.png");
-loader.add("assets/sound/theme.mp3");
 
 //level0Setup 
 var current_level,board,holes,state; 
@@ -668,5 +667,3 @@ function keydownEventHandler(event){
     }
     renderer.render(main_stage);
 }
-
-
