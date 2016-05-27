@@ -24,7 +24,8 @@ var MOVE_UP = 3;
 var MOVE_DOWN = 4;
 var MOVE_NONE = 0;
 
-var obstacles;
+var score;
+var obstacles = [];
 // The move function starts or continues movement
 function move() {
   var new_postion = new PIXI.Sprite(player.texture);
@@ -109,40 +110,42 @@ function setup() {
   var tu = new TileUtilities(PIXI);
   world = tu.makeTiledWorld("map", "tileset.png");
   stage.addChild(world);
-
+  
   var frames = [];
 
-  for (var i=1; i<=3; i++) {
-    frames.push(PIXI.Texture.fromFrame('bob' + i + '.png'));
-  }
+    for (var i=1; i<=3; i++) {
+      frames.push(PIXI.Texture.fromFrame('bob' + i + '.png'));
+    }
 
-  player = new PIXI.extras.MovieClip(frames);
-  player.scale.x = 0.5;
-  player.scale.y = 0.5;
-  player.x = 40;
-  player.y = 40;
-  player.anchor.x = 0.0;
-  player.anchor.y = 1.0;
-  player.animationSpeed = 0.1;
-  player.play();
+    player = new PIXI.extras.MovieClip(frames);
+    player.scale.x = 0.5;
+    player.scale.y = 0.5;
+    player.x = 40;
+    player.y = 40;
+    player.anchor.x = 0.0;
+    player.anchor.y = 1.0;
+    player.animationSpeed = 0.1;
+    player.play();
+    score = 0;
 
-  // Find the entity layer
-  var entity_layer = world.getObject("entities");
-  entity_layer.addChild(player);
+    // Find the entity layer
+    entity_layer = world.getObject("entities");
+    entity_layer.addChild(player);
 
-  obstacles = [];
-
-  for(var i=1; i<=3; i++){
-    obs = new PIXI.Sprite(PIXI.Texture.fromFrame("assets/circle.png"));
-    obs.scale.x = 0.5;
-    obs.scale.y = 0.5;
-    obstacles.push(obs);
-    entity_layer.addChild(obs);
-  }
+    for(var i=1; i<=40; i++){
+      obs = new PIXI.Sprite(PIXI.Texture.fromFrame("assets/circle.png"));
+      obs.scale.x = 0.5;
+      obs.scale.y = 0.5;
+      obs.x = Math.floor(Math.random() * ((world.worldWidth-40) - 30 + 1)) + 30;
+      obs.y = Math.floor(Math.random() * ((world.height-40)- 30 + 1)) + 30;
+      obstacles.push(obs);
+      entity_layer.addChild(obs);
+    }
 
   player.direction = MOVE_NONE;
   player.moving = false;
-  state = running;
+
+  state = state1;
   animate();
 }
 
@@ -153,8 +156,14 @@ function animate(timestamp) {
   renderer.render(stage);
 }
 
-function running(){
-
+var score_container;
+function state1(){
+  checkCollsion();
+  world.removeChild(score_container);
+  score_container = new PIXI.Text(score,{font:'10px Arial',fill: "black"});
+  score_container.x = player.x;
+  score_container.y = player.y;
+  world.addChild(score_container);
 }
 
 function update_camera() {
@@ -176,10 +185,19 @@ function rectangle_intersection(sprite1,sprite2){
   var t2 = sprite2.y;
   var b2 = sprite2.y + sprite2.height;
 
-  if(l1 <= r2 && r1 >= l2 && b1 >= t2 && t1 <= b2){
-    console.log("collsion");
+  if(l1 < r2 && r1 > l2 && b1 > t2 && t1 < b2){
     return true;
  }
-
   return false;
 }
+function checkCollsion(){
+    for (i=0; i<obstacles.length; i++){
+      if(rectangle_intersection(player,obstacles[i])){
+        entity_layer.removeChild(obstacles[i]);
+        obstacles.splice(i,1);
+        score ++;
+      }
+  }
+}
+
+
