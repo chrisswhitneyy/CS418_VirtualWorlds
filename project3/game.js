@@ -1,3 +1,13 @@
+/*******
+Project 3 Tiles: Water Collection
+
+The purpose of this game is to collect water for the alien 
+bob. Use the WASD keys to move bob around the stage and e
+enter to restart. 
+
+Author: Chris Whitney
+*******/
+
 var GAME_WIDTH = 720;
 var GAME_HEIGHT = 400;
 var GAME_SCALE = 4;
@@ -25,6 +35,7 @@ var MOVE_DOWN = 4;
 var MOVE_NONE = 0;
 
 var score;
+var number_runs = 0;
 var obstacles = [];
 // The move function starts or continues movement
 function move() {
@@ -67,6 +78,12 @@ function move() {
   //   createjs.Tween.get(player).to({x: player.x, y:player.y}, 500).call(move);
   // }
 }
+// Resarts the game
+function restart(){
+  stage.removeChild(world);
+  score = 0;
+  setup();
+}
 
 // Keydown events start movement
 window.addEventListener("keydown", function (e) {
@@ -85,6 +102,8 @@ window.addEventListener("keydown", function (e) {
     player.direction = MOVE_LEFT;
   else if (e.keyCode == 68)
     player.direction = MOVE_RIGHT;
+  else if(e.keyCode == 13)
+    restart();
 
   move();
 });
@@ -101,11 +120,11 @@ PIXI.SCALE_MODES.DEFAULT = PIXI.SCALE_MODES.NEAREST;
 PIXI.loader
   .add('map', 'map.json')
   .add('tileset', 'tileset.png')
-  .add('bob1', 'assets/bob1.png')
-  .add('bob', 'assets/player.json')
-  .add('circle', 'assets/circle.png')
+  .add('bob', 'player.json')
+  .add('circle', 'circle.png')
   .load(setup);
 
+// Sets up the world
 function setup() {
   var tu = new TileUtilities(PIXI);
   world = tu.makeTiledWorld("map", "tileset.png");
@@ -113,40 +132,46 @@ function setup() {
   
   var frames = [];
 
-    for (var i=1; i<=3; i++) {
-      frames.push(PIXI.Texture.fromFrame('bob' + i + '.png'));
-    }
+  for (var i=1; i<=3; i++) {
+    frames.push(PIXI.Texture.fromFrame('bob' + i + '.png'));
+  }
 
-    player = new PIXI.extras.MovieClip(frames);
-    player.scale.x = 0.5;
-    player.scale.y = 0.5;
-    player.x = 40;
-    player.y = 40;
-    player.anchor.x = 0.0;
-    player.anchor.y = 1.0;
-    player.animationSpeed = 0.1;
-    player.play();
-    score = 0;
+  player = new PIXI.extras.MovieClip(frames);
+  player.scale.x = 0.5;
+  player.scale.y = 0.5;
+  player.x = 40;
+  player.y = 40;
+  player.anchor.x = 0.0;
+  player.anchor.y = 1.0;
+  player.animationSpeed = 0.1;
+  player.play();
+  score = 0;
 
-    // Find the entity layer
-    entity_layer = world.getObject("entities");
-    entity_layer.addChild(player);
+  // Find the entity layer
+  entity_layer = world.getObject("entities");
+  entity_layer.addChild(player);
 
-    for(var i=1; i<=40; i++){
-      obs = new PIXI.Sprite(PIXI.Texture.fromFrame("assets/circle.png"));
-      obs.scale.x = 0.5;
-      obs.scale.y = 0.5;
-      obs.x = Math.floor(Math.random() * ((world.worldWidth-40) - 30 + 1)) + 30;
-      obs.y = Math.floor(Math.random() * ((world.height-40)- 30 + 1)) + 30;
-      obstacles.push(obs);
-      entity_layer.addChild(obs);
-    }
+  for(var i=1; i<=40; i++){
+    obs = new PIXI.Sprite(PIXI.Texture.fromFrame("circle.png"));
+    obs.scale.x = 0.5;
+    obs.scale.y = 0.5;
+    obs.x = Math.floor(Math.random() * ((world.worldWidth-40) - 30 + 1)) + 30;
+    obs.y = Math.floor(Math.random() * ((world.height-40)- 30 + 1)) + 30;
+    obstacles.push(obs);
+    entity_layer.addChild(obs);
+  }
 
   player.direction = MOVE_NONE;
   player.moving = false;
-
+  number_runs ++;
   state = state1;
   animate();
+}
+function winSetup(){
+  var win = new PIXI.Container();
+  var text = new PIXI.Text("Congrats you won.",{font : '24px Arial', fill : 0x000000});
+  win.addChild(text);
+  world.addChild(win);
 }
 
 function animate(timestamp) {
@@ -159,6 +184,11 @@ function animate(timestamp) {
 var score_container;
 function state1(){
   checkCollsion();
+  if(score == 40 && number_runs < 3){
+    setup();
+  }else if(number_runs == 3){
+    winSetup();
+  }
   world.removeChild(score_container);
   score_container = new PIXI.Text(score,{font:'10px Arial',fill: "black"});
   score_container.x = player.x;
@@ -190,13 +220,14 @@ function rectangle_intersection(sprite1,sprite2){
  }
   return false;
 }
+
 function checkCollsion(){
-    for (i=0; i<obstacles.length; i++){
-      if(rectangle_intersection(player,obstacles[i])){
-        entity_layer.removeChild(obstacles[i]);
-        obstacles.splice(i,1);
-        score ++;
-      }
+  for (i=0; i<obstacles.length; i++){
+    if(rectangle_intersection(player,obstacles[i])){
+      entity_layer.removeChild(obstacles[i]);
+      obstacles.splice(i,1);
+      score ++;
+    }
   }
 }
 
