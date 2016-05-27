@@ -35,7 +35,6 @@ var MOVE_DOWN = 4;
 var MOVE_NONE = 0;
 
 var score;
-var number_runs = 0;
 var obstacles = [];
 // The move function starts or continues movement
 function move() {
@@ -163,15 +162,8 @@ function setup() {
 
   player.direction = MOVE_NONE;
   player.moving = false;
-  number_runs ++;
   state = state1;
   animate();
-}
-function winSetup(){
-  var win = new PIXI.Container();
-  var text = new PIXI.Text("Congrats you won.",{font : '24px Arial', fill : 0x000000});
-  win.addChild(text);
-  world.addChild(win);
 }
 
 function animate(timestamp) {
@@ -184,11 +176,6 @@ function animate(timestamp) {
 var score_container;
 function state1(){
   checkCollsion();
-  if(score == 40 && number_runs < 3){
-    setup();
-  }else if(number_runs == 3){
-    winSetup();
-  }
   world.removeChild(score_container);
   score_container = new PIXI.Text(score,{font:'10px Arial',fill: "black"});
   score_container.x = player.x;
