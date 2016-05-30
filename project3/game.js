@@ -1,9 +1,9 @@
 /*******
 Project 3 Tiles: Water Collection
 
-The purpose of this game is to collect water for the alien 
+The purpose of this game is to collect water for the alien
 bob. Use the WASD keys to move bob around the stage and e
-enter to restart. 
+enter to restart.
 
 Author: Chris Whitney
 *******/
@@ -59,10 +59,10 @@ function move() {
 
   if (player.direction == MOVE_UP)
     new_postion.y-= 20;
-  
+
   if (player.direction == MOVE_DOWN)
     new_postion.y+= 20;
-  
+
   //checks world boundariesa
   if(new_postion.x < 20 || new_postion.x > world.worldWidth-40 ||
     new_postion.y < 40 || new_postion.y > world.worldHeight-20){
@@ -90,7 +90,7 @@ window.addEventListener("keydown", function (e) {
   if (!player) return;
   if (player.moving) return;
   if (e.repeat == true) return;
-  
+
   player.direction = MOVE_NONE;
 
   if (e.keyCode == 87)
@@ -128,7 +128,7 @@ function setup() {
   var tu = new TileUtilities(PIXI);
   world = tu.makeTiledWorld("map", "tileset.png");
   stage.addChild(world);
-  
+
   var frames = [];
 
   for (var i=1; i<=3; i++) {
@@ -217,5 +217,3 @@ function checkCollsion(){
     }
   }
 }
-
-
