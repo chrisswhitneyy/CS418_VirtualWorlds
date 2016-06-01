@@ -2,7 +2,7 @@
 Project 4:
 ******/
 
-var GAME_HEIGHT = 600;
+var GAME_HEIGHT = 400;
 var GAME_WIDTH = 400;
 var GAME_SCALE = 1;
 
@@ -20,12 +20,13 @@ var ball;
 var world;
 
 // Character movement constants
+var MOVE_NONE = 0;
 var MOVE_LEFT = 1;
 var MOVE_RIGHT = 2;
-var MOVE_UP = 3;
-var MOVE_DOWN = 4;
-var FIRE = 5;
-var MOVE_NONE = 0;
+
+// Other actions
+var JUMP = 3;
+var FIRE = 4;
 
 // The move function starts or continues movement
 function move() {
@@ -36,6 +37,7 @@ function move() {
   new_postion.width = player.width;
 
   if (player.direction == MOVE_NONE) {
+    player.texture = new PIXI.Texture.fromFrame('golfer1.png');
     player.moving = false;
     return;
   }
@@ -48,25 +50,23 @@ function move() {
   if (player.direction == MOVE_RIGHT)
     new_postion.x+= 40;
 
-  if (player.direction == MOVE_UP)
-    new_postion.y-= 40;
-
-  if (player.direction == MOVE_DOWN)
-    new_postion.y+= 40;
-
   if(player.direction == FIRE){
-    new_postion.y-=10;
-    createjs.Tween.get(player).to({y:new_postion.y+player.height,x:new_postion.x},500,createjs.Ease.linear);
-    createjs.Tween.get(ball).to({y:new_postion.y+225,x:new_postion.x},500,createjs.Ease.linear).call(move);
+    //new_postion.y-=10;
+    player.texture = new PIXI.Texture.fromFrame('golfer2.png');
+    //createjs.Tween.get(ball).to({y:new_postion.y+225,x:new_postion.x},500,createjs.Ease.linear).call(move);
+  }
+  if(player.direction == JUMP){
+    player.texture = new PIXI.Texture.fromFrame('golfer3.png');
+
   }
 
   // collsion detection
 
   // tween to new position
-  createjs.Tween.get(player).to({y:new_postion.y,x:new_postion.x},500,createjs.Ease.linear);
-  createjs.Tween.get(ball).to({y:new_postion.y+player.height,x:new_postion.x},500,createjs.Ease.linear).call(move);
+  createjs.Tween.get(player).to({y:new_postion.y,x:new_postion.x},500,createjs.Ease.linear).call(move);
+  //c reatejs.Tween.get(ball).to({y:new_postion.y+player.height,x:new_postion.x},500,createjs.Ease.linear).call(move);
 
-    //}
+
 }
 
 // Keydown events start movement
@@ -79,9 +79,7 @@ window.addEventListener("keydown",function onKeydown (e) {
   player.direction = MOVE_NONE;
 
   if (e.keyCode == 87)
-    player.direction = MOVE_UP;
-  else if (e.keyCode == 83)
-    player.direction = MOVE_DOWN;
+    player.direction = JUMP;
   else if (e.keyCode == 65)
     player.direction = MOVE_LEFT;
   else if (e.keyCode == 68)
@@ -90,7 +88,6 @@ window.addEventListener("keydown",function onKeydown (e) {
     player.direction = FIRE;
   //else if(e.keyCode == 13)
     //restart();
-    console.log(e.keyCode)
   move();
 });
 
@@ -99,35 +96,36 @@ window.addEventListener("keyup", function onKeyUp(e) {
   e.preventDefault();
   if (!player) return;
   player.direction = MOVE_NONE;
+
 });
 
 
-
 PIXI.loader
-  .add("map","assets/map.json")
+  .add("map1","assets/map1.json")
   .add("assets/tileset.png","assets/tileset.png")
-  .add("assets/player.png","assets/player.png")
-  .add("assets/golf_ball.png","assets/golf_ball.png")
-  .load(menuSetup);
+  .add("assets/assets.json","assets/assets.json")
+  .load(trainingSetup);
 
-function menuSetup(){
+function trainingSetup(){
   var tu = new TileUtilities(PIXI);
-  world = tu.makeTiledWorld("map", "assets/tileset.png");
+  world = tu.makeTiledWorld("map1", "assets/tileset.png");
   stage.addChild(world);
 
-  var text = new PIXI.Text("play\ninstructions\ncredits", {font: "16px Desyrel"});
-  text.position.x = 26;
-  text.position.y = 10;
-  world.addChild(text);
+  // var text = new PIXI.Text("play\ninstructions\ncredits", {font: "16px Desyrel"});
+  // text.position.x = 26;
+  // text.position.y = 10;
+  // world.addChild(text);
 
-  player = new PIXI.Sprite(PIXI.Texture.fromFrame("assets/player.png"));
-  player.x = 40;
-  player.y = 80;
+  player = new PIXI.Sprite(PIXI.Texture.fromFrame("golfer1.png"));
+  player.x = -70;
+  player.y = 200;
   world.addChild(player);
 
-  ball = new PIXI.Sprite(PIXI.Texture.fromFrame("assets/golf_ball.png"));
-  ball.x = player.x;
-  ball.y = player.y + player.height;
+  ball = new PIXI.Sprite(PIXI.Texture.fromFrame("golf_ball.png"));
+  ball.x = 20;
+  ball.y = 200;
+  ball.scale.x = 0.5;
+  ball.scale.y = 0.5;
   world.addChild(ball);
 
   // state function reference
