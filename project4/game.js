@@ -35,19 +35,21 @@ function move() {
   new_postion.y = player.y;
 
   if (player.direction == MOVE_NONE) {
-    player.texture = new PIXI.Texture.fromFrame('golfer1.png');
+    player.texture = new PIXI.Texture.fromFrame('marsman2.png');
     player.moving = false;
     return;
   }
 
   player.moving = true;
 
+
   if (player.direction == MOVE_LEFT) {
     new_postion.x-= 40;
   }
   if (player.direction == MOVE_RIGHT)
     new_postion.x+= 40;
-
+  if(player.direction == FIRE)
+    player.texture = new PIXI.Texture.fromFrame('marsman1.png');
   // collsion detection
 
   // tween to new position
@@ -167,9 +169,11 @@ function level0Setup(){
   window.addEventListener("keyup",playOnKeyUp);
   window.addEventListener("keydown",playOnKeydown);
 
-  player = new PIXI.Sprite(PIXI.Texture.fromFrame("golfer1.png"));
-  player.x = -70;
-  player.y = 200;
+  player = new PIXI.Sprite(PIXI.Texture.fromFrame("marsman2.png"));
+  player.x = 10;
+  player.y = 165;
+  player.scale.x = 2;
+  player.scale.y = 2;
   world.addChild(player);
 
   animate();
