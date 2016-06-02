@@ -15,26 +15,24 @@ var stage = new PIXI.Container();
 stage.scale.x = GAME_SCALE;
 stage.scale.y = GAME_SCALE;
 
-var player;
-var ball;
 var world;
+var menuStage;
+var selector;
+var player;
 
 // Character movement constants
 var MOVE_NONE = 0;
 var MOVE_LEFT = 1;
 var MOVE_RIGHT = 2;
-
-// Other actions
-var JUMP = 3;
-var FIRE = 4;
+var FIRE = 3;
 
 // The move function starts or continues movement
 function move() {
+  if(!player) return;
+
   var new_postion = new PIXI.Sprite(player.texture);
   new_postion.x = player.x;
   new_postion.y = player.y;
-  new_postion.height = player.height;
-  new_postion.width = player.width;
 
   if (player.direction == MOVE_NONE) {
     player.texture = new PIXI.Texture.fromFrame('golfer1.png');
@@ -50,16 +48,6 @@ function move() {
   if (player.direction == MOVE_RIGHT)
     new_postion.x+= 40;
 
-  if(player.direction == FIRE){
-    //new_postion.y-=10;
-    player.texture = new PIXI.Texture.fromFrame('golfer2.png');
-    //createjs.Tween.get(ball).to({y:new_postion.y+225,x:new_postion.x},500,createjs.Ease.linear).call(move);
-  }
-  if(player.direction == JUMP){
-    player.texture = new PIXI.Texture.fromFrame('golfer3.png');
-
-  }
-
   // collsion detection
 
   // tween to new position
@@ -69,8 +57,52 @@ function move() {
 
 }
 
-// Keydown events start movement
-window.addEventListener("keydown",function onKeydown (e) {
+function moveSelector(y){
+  if (!selector) return;
+  createjs.Tween.removeTweens(selector.position);
+  createjs.Tween.get(selector.position).to({y: 10 + y}, 500, createjs.Ease.bounceOut);
+}
+
+var menu = StateMachine.create({
+  initial: {state: 'play', event: 'init'},
+  error: function() {},
+  events: [
+    {name: "down", from: "play", to: "tutorial"},
+    {name: "down", from: "tutorial", to: "credits"},
+    {name: "down", from: "credits", to: "credits"},
+    {name: "up", from: "play", to: "play"},
+    {name: "up", from: "tutorial", to: "play"},
+    {name: "up", from: "credits", to: "tutorial"}],
+  callbacks: {
+    onplay: function() { moveSelector(0); },
+    ontutorial: function() { moveSelector(37*1); },
+    oncredits: function() { moveSelector(37*2); }
+  }
+});
+
+function menuOnKeyDown(e){
+  if (e.keyCode == 87) // W key
+    menu.up();
+  if (e.keyCode == 83) // S key
+    menu.down();
+  if (e.keyCode == 13){ // Enter key
+    menuStage.visible = false;
+    switch (menu.current) {
+      case "play":
+        level1Setup();
+      case "credits":
+        creditsSetup();
+      case "tutorial":
+        level0Setup();
+      default:
+        return;
+    }
+
+  }
+
+}
+
+function playOnKeydown (e) {
   e.preventDefault();
   if (!player) return;
   if (player.moving) return;
@@ -89,57 +121,63 @@ window.addEventListener("keydown",function onKeydown (e) {
   //else if(e.keyCode == 13)
     //restart();
   move();
-});
-
-// Keyup events end movement
-window.addEventListener("keyup", function onKeyUp(e) {
+}
+function playOnKeyUp(e) {
   e.preventDefault();
   if (!player) return;
   player.direction = MOVE_NONE;
 
-});
+};
 
+window.addEventListener("keydown",menuOnKeyDown);
 
 PIXI.loader
   .add("map1","assets/map1.json")
   .add("assets/tileset.png","assets/tileset.png")
   .add("assets/assets.json","assets/assets.json")
-  .load(trainingSetup);
+  .add("gamefont.fnt","gamefont.fnt")
+  .load(menuSetup);
 
-function trainingSetup(){
+function menuSetup(){
   var tu = new TileUtilities(PIXI);
   world = tu.makeTiledWorld("map1", "assets/tileset.png");
   stage.addChild(world);
 
-  // var text = new PIXI.Text("play\ninstructions\ncredits", {font: "16px Desyrel"});
-  // text.position.x = 26;
-  // text.position.y = 10;
-  // world.addChild(text);
+  menuStage = new PIXI.Container();
+
+  var text = new PIXI.extras.BitmapText("play\ntutorial\ncredits", {font: "35px gamefont"});
+  text.position.x = 45;
+  text.position.y = 10;
+  menuStage.addChild(text);
+
+  selector = new PIXI.Sprite(PIXI.Texture.fromFrame("golf_ball.png"));
+  selector.x = 10;
+  selector.y = 10;
+  menuStage.addChild(selector);
+  stage.addChild(menuStage);
+
+  animate();
+
+}
+function level0Setup(){
+  // Removes menu event listener
+  window.removeEventListener("keydown",menuOnKeyDown);
+
+  // Keyup events end movement
+  window.addEventListener("keyup",playOnKeyUp);
+  window.addEventListener("keydown",playOnKeydown);
 
   player = new PIXI.Sprite(PIXI.Texture.fromFrame("golfer1.png"));
   player.x = -70;
   player.y = 200;
   world.addChild(player);
 
-  ball = new PIXI.Sprite(PIXI.Texture.fromFrame("golf_ball.png"));
-  ball.x = 20;
-  ball.y = 200;
-  ball.scale.x = 0.5;
-  ball.scale.y = 0.5;
-  world.addChild(ball);
-
-  // state function reference
-  state = state1;
   animate();
 }
 
-function state1(){
-
-}
 function animate(timestamp){
   requestAnimationFrame(animate);
-  state();
-  update_camera();
+  if(player)update_camera();
   renderer.render(stage);
 }
 

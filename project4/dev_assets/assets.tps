@@ -6,7 +6,7 @@
         <key>texturePackerVersion</key>
         <string>4.2.1</string>
         <key>fileName</key>
-        <string>/Users/cdubs/Gits/cs413_virtualworlds/project4/assets.tps</string>
+        <string>/Users/cdubs/Gits/cs413_virtualworlds/project4/dev_assets/assets.tps</string>
         <key>autoSDSettings</key>
         <array>
             <struct type="AutoSDSettings">
@@ -188,10 +188,11 @@
         </struct>
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
-            <key type="filename">assets/golf_ball.png</key>
-            <key type="filename">assets/golfer1.png</key>
-            <key type="filename">assets/golfer4.png</key>
-            <key type="filename">assets/golfer5.png</key>
+            <key type="filename">marsman1.png</key>
+            <key type="filename">marsman2.png</key>
+            <key type="filename">zoombie1.png</key>
+            <key type="filename">zoombie2.png</key>
+            <key type="filename">zoombie3.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -199,10 +200,11 @@
         </map>
         <key>fileList</key>
         <array>
-            <filename>assets/golf_ball.png</filename>
-            <filename>assets/golfer1.png</filename>
-            <filename>assets/golfer4.png</filename>
-            <filename>assets/golfer5.png</filename>
+            <filename>marsman1.png</filename>
+            <filename>marsman2.png</filename>
+            <filename>zoombie1.png</filename>
+            <filename>zoombie2.png</filename>
+            <filename>zoombie3.png</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>
