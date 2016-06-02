@@ -17,13 +17,8 @@ stage.scale.y = GAME_SCALE;
 
 var world;
 var menuStage;
-var levelStage;
-var state;
-
 var selector;
 var player;
-var lasers;
-var zombie;
 
 // Character movement constants
 var MOVE_NONE = 0;
@@ -47,37 +42,21 @@ function move() {
 
   player.moving = true;
 
+
   if (player.direction == MOVE_LEFT) {
     new_postion.x-= 40;
   }
   if (player.direction == MOVE_RIGHT)
     new_postion.x+= 40;
-  if(player.direction == FIRE){
+  if(player.direction == FIRE)
     player.texture = new PIXI.Texture.fromFrame('marsman1.png');
-    shoot();
-  }
   // collsion detection
 
   // tween to new position
   createjs.Tween.get(player).to({y:new_postion.y,x:new_postion.x},500,createjs.Ease.linear).call(move);
   //c reatejs.Tween.get(ball).to({y:new_postion.y+player.height,x:new_postion.x},500,createjs.Ease.linear).call(move);
-}
-function moveZombie(){
-  if(!zombie) return;
-  //createjs.Tween.get(zombie).to({x:zombie.x -= 20},createjs.Ease.linear);
-}
 
-function shoot() {
-  if(levelStage){
-    var laser = new PIXI.Graphics();
-    laser.beginFill(0xe74c3c);
-    laser.drawCircle(player.x+45,player.y+95,4);
-    laser.endFill();
-    levelStage.addChild(laser);
-    createjs.Tween.removeTweens(laser.position);
-    createjs.Tween.get(laser.position).to({x: laser.x+800}, 4000);
-    lasers.push(laser);
-  }
+
 }
 
 function moveSelector(y){
@@ -177,7 +156,6 @@ function menuSetup(){
   selector.x = 10;
   selector.y = 10;
   menuStage.addChild(selector);
-
   stage.addChild(menuStage);
 
   animate();
@@ -191,43 +169,20 @@ function level0Setup(){
   window.addEventListener("keyup",playOnKeyUp);
   window.addEventListener("keydown",playOnKeydown);
 
-  levelStage = new PIXI.Container();
-
   player = new PIXI.Sprite(PIXI.Texture.fromFrame("marsman2.png"));
   player.x = 10;
   player.y = 165;
   player.scale.x = 2;
   player.scale.y = 2;
-  levelStage.addChild(player);
+  world.addChild(player);
 
-  zombie = new PIXI.Sprite(PIXI.Texture.fromFrame("zoombie1.png"));
-  zombie.x = renderer.width;
-  zombie.y = 165;
-  zombie.scale.x = 2;
-  zombie.scale.y = 2;
-  levelStage.addChild(zombie);
-
-  lasers = [];
-
-  world.addChild(levelStage);
-  state = level1;
   animate();
 }
 
 function animate(timestamp){
   requestAnimationFrame(animate);
   if(player)update_camera();
-  if(state) state();
   renderer.render(stage);
-}
-var numCalls = 0;
-function level1(){
-  if(numCalls == 150){
-    moveZombie();
-    numCalls = 0;
-  }
-  numCalls ++;
-  laserCollsionCheck();
 }
 
 function update_camera() {
@@ -235,15 +190,4 @@ function update_camera() {
   stage.y = -player.y*GAME_SCALE + GAME_HEIGHT/2 + player.height/2*GAME_SCALE;
   stage.x = -Math.max(0, Math.min(world.worldWidth*GAME_SCALE - GAME_WIDTH, -stage.x));
   stage.y = -Math.max(0, Math.min(world.worldHeight*GAME_SCALE - GAME_HEIGHT, -stage.y));
-}
-function laserCollsionCheck(){
-  if(!lasers || !zombie) return;
-  for (i=0;i<lasers.length;i++){
-    if(lasers[i].x >= zombie.x){
-      lasers.splice(i,1);
-      levelStage.removeChild(zombie);
-      return true;
-    }
-  }
-  return false;
 }
