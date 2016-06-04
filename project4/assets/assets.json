@@ -1,6 +1,6 @@
 {"frames": {
 
-"golf_ball.png":
+"bonus.png":
 {
 	"frame": {"x":0,"y":0,"w":40,"h":40},
 	"rotated": false,
@@ -11,7 +11,7 @@
 },
 "marsman1.png":
 {
-	"frame": {"x":0,"y":40,"w":40,"h":80},
+	"frame": {"x":40,"y":0,"w":40,"h":80},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":40,"h":80},
@@ -20,7 +20,7 @@
 },
 "marsman2.png":
 {
-	"frame": {"x":0,"y":120,"w":40,"h":80},
+	"frame": {"x":80,"y":0,"w":40,"h":80},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":40,"h":80},
@@ -29,7 +29,7 @@
 },
 "zoombie1.png":
 {
-	"frame": {"x":0,"y":200,"w":40,"h":80},
+	"frame": {"x":0,"y":80,"w":40,"h":80},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":40,"h":80},
@@ -38,7 +38,7 @@
 },
 "zoombie2.png":
 {
-	"frame": {"x":0,"y":280,"w":40,"h":80},
+	"frame": {"x":40,"y":80,"w":40,"h":80},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":40,"h":80},
@@ -47,7 +47,16 @@
 },
 "zoombie3.png":
 {
-	"frame": {"x":0,"y":360,"w":40,"h":80},
+	"frame": {"x":80,"y":80,"w":40,"h":80},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":40,"h":80},
+	"sourceSize": {"w":40,"h":80},
+	"pivot": {"x":0.5,"y":0.5}
+},
+"zoombie4.png":
+{
+	"frame": {"x":0,"y":160,"w":40,"h":80},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":40,"h":80},
@@ -59,8 +68,8 @@
 	"version": "1.0",
 	"image": "assets.png",
 	"format": "RGBA8888",
-	"size": {"w":40,"h":440},
+	"size": {"w":120,"h":240},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:e6798b30c069fb167c17da6b6b790850:4fae3dc18cedc5aa42bc71476597d13f:a759b6bbc8381ac9c472b28f589ad0d6$"
+	"smartupdate": "$TexturePacker:SmartUpdate:c1e6c3bb219aa957d15ee41299ac4ae5:d4c2a7ed9d52bb3986a46b248fbcae86:a759b6bbc8381ac9c472b28f589ad0d6$"
 }
 }
